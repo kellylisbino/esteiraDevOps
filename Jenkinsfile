@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:dind'
+            args '--privileged'
+        }
+    }
     stages {
         stage('Cleanup') {
             steps {
@@ -8,17 +13,7 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                git 'https://seu-repositorio.git'
-            }
-        }
-        stage('Construção') {
-            steps {
-                sh 'docker build -t minha-app .'
-            }
-        }
-        stage('Entrega') {
-            steps {
-                sh 'docker run -d --name minha-app minha-app'
+                checkout scm
             }
         }
     }
