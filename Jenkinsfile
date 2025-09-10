@@ -48,7 +48,7 @@ pipeline {
                 // Usando Docker para construir o pacote Python em vez de depender de Python no Jenkins
                 sh """
                     mkdir -p dist
-                    echo "Pacote gerado em $(date)" > dist/artefato.txt
+                    echo "Pacote gerado em \$(date)" > dist/artefato.txt
                     echo "Versão: 1.0.0" >> dist/artefato.txt
                 """
                 echo 'Artefato pronto para deploy'
