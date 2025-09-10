@@ -45,7 +45,6 @@ pipeline {
             steps {
                 echo 'Preparando para entrega...'
 
-                // Usando Docker para construir o pacote Python em vez de depender de Python no Jenkins
                 sh """
                     mkdir -p dist
                     echo "Pacote gerado em \$(date)" > dist/artefato.txt
