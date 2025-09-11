@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
+    container_name: mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: senha123
+      MYSQL_DATABASE: docker_e_kubernetes
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: flask-web
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: senha123
+      MYSQL_ADDRESS: mysql:3306
+      MYSQL_DBNAME: docker_e_kubernetes
+    ports:
+      - "8200:8200"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins-ci
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    #volumes:
+    #  - ./jenkins_home:/var/jenkins_home
+    #  - /var/run/docker.sock:/var/run/docker.sock
+    #environment:
+    #  - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    depends_on:
+      - web
+      - mysql
+
+#volumes:
+#  jenkins_home:
